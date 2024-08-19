@@ -13,11 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const category_1 = __importDefault(require("../routes/category"));
 const product_1 = __importDefault(require("../routes/product"));
-const cors_1 = __importDefault(require("cors"));
+const role_1 = __importDefault(require("../routes/role"));
 const user_1 = __importDefault(require("../routes/user"));
+const category_2 = require("./category");
 const product_2 = require("./product");
+const role_2 = require("./role");
 const user_2 = require("./user");
+const cors_1 = __importDefault(require("cors"));
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -33,7 +37,9 @@ class Server {
         });
     }
     router() {
+        this.app.use(category_1.default);
         this.app.use(product_1.default);
+        this.app.use(role_1.default);
         this.app.use(user_1.default);
     }
     midlewares() {
@@ -46,8 +52,10 @@ class Server {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // await Product.sync({force: true}); // Clean date of table
+                yield category_2.Category.sync();
                 yield product_2.Product.sync();
                 // await User.sync({alter: true}); // Update atribute of table
+                yield role_2.Role.sync();
                 yield user_2.User.sync();
                 console.log("Conexion de DB exitoso");
             }

@@ -17,39 +17,31 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = require("../models/user");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, lastname, password, email, credential } = req.body;
-    // console.log(username)
-    // console.log(password);
-    // VALIDAR SI EL USUARIO EXISTE EN LA BASE DE DATOS
-    // const userEmail = await User.findOne({ where: { [Op.or]: { email: email, credential: credential } } })
-    const userEmail = yield user_1.User.findOne({ where: { email: email } });
-    const userCredential = yield user_1.User.findOne({ where: { credential: credential } });
+    const { Uname, Ulastname, Upassword, Uemail, Ucredential } = req.body;
+    const userEmail = yield user_1.User.findOne({ where: { Uemail: Uemail } });
+    const userCredential = yield user_1.User.findOne({ where: { Ucredential: Ucredential } });
     if (userEmail) {
         return res.status(400).json({
-            msg: `Usuario ya existe con el email ${email}`
+            msg: `Usuario ya existe con el email ${Uemail}`
         });
     }
     if (userCredential) {
         return res.status(400).json({
-            msg: `Usuario ya existe con la credencial ${credential}`
+            msg: `Usuario ya existe con la credencial ${Ucredential}`
         });
     }
-    // console.log("Estoy por aquí...");
-    // ENCRIPTAR LA CLAVE 
-    const passwordHash = yield bcrypt_1.default.hash(password, 10);
-    // console.log(passwordHash);
+    const UpasswordHash = yield bcrypt_1.default.hash(Upassword, 10);
     try {
-        // GUARDAR DATOS EN LA BASE DE DATOS
         user_1.User.create({
-            name: name,
-            lastname: lastname,
-            email: email,
-            password: passwordHash,
-            credential: credential,
-            status: 1
+            Uname: Uname,
+            Ulastname: Ulastname,
+            Uemail: Uemail,
+            Upassword: UpasswordHash,
+            Ucredential: Ucredential,
+            Ustatus: 1
         });
         res.json({
-            msg: `User ${name} ${lastname} create success.`
+            msg: `User ${Uname} ${Ulastname} create success.`
         });
     }
     catch (error) {
@@ -60,31 +52,23 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
-    // console.log(req.body);
-    // res.json({
-    //     msg: "LOGIN USER",
-    //     body: req.body
-    // })
-    // VALIDAMOS SI EL USUARIO EXISTE EN LA BASE DE DATOS 
-    const user = yield user_1.User.findOne({ where: { email: email } });
+    const { Uemail, Upassword } = req.body;
+    console.log(req.body);
+    const user = yield user_1.User.findOne({ where: { Uemail: Uemail } });
     if (!user) {
         return res.status(400).json({
-            msg: `Usuario no existe con el email ${email}`
+            msg: `Usuario no existe con el email ${Uemail}`
         });
     }
-    // VALIDAMOS PASSWORD
-    const passwordValid = yield bcrypt_1.default.compare(password, user.password);
-    // console.log(passwordValid);
+    const passwordValid = yield bcrypt_1.default.compare(Upassword, user.Upassword);
     if (!passwordValid) {
         return res.status(400).json({
-            msg: `Password Incorrecto => ${password}`
+            msg: `Password Incorrecto => ${Upassword}`
         });
     }
     const token = jsonwebtoken_1.default.sign({
-        email: email
-    }, process.env.SECRET_KEY || 'TSE-Edaniel-Valencia', { expiresIn: '10000' });
-    //  res.status(tok e).json({msg: `Password Incorrecto => ${password}` })
+        Uemail: Uemail
+    }, process.env.SECRET_KEY || 'TSE-Edaniel-Valencia');
     res.json({ token });
 });
 exports.login = login;

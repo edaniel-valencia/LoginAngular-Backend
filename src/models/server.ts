@@ -1,9 +1,13 @@
 import express, {Application} from 'express'
-import routesProducts from '../routes/product'
-import cors from 'cors'
+import routesCategoty from '../routes/category'
+import routesProduct from '../routes/product'
+import routesRole from '../routes/role'
 import routesUser from '../routes/user'
+import { Category } from './category'
 import { Product } from './product'
+import { Role } from './role'
 import { User } from './user'
+import cors from 'cors'
 
 class Server {
 
@@ -28,7 +32,9 @@ class Server {
     }
 
     router(){
-        this.app.use(routesProducts);
+        this.app.use(routesCategoty);
+        this.app.use(routesProduct);
+        this.app.use(routesRole);
         this.app.use(routesUser);
     }
 
@@ -44,8 +50,10 @@ class Server {
         try {
 
             // await Product.sync({force: true}); // Clean date of table
+            await Category.sync(); 
             await Product.sync(); 
             // await User.sync({alter: true}); // Update atribute of table
+            await Role.sync(); 
             await User.sync(); 
             console.log("Conexion de DB exitoso");
             
