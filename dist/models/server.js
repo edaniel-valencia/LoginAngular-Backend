@@ -55,7 +55,7 @@ class Server {
                 yield category_2.Category.sync();
                 yield product_2.Product.sync();
                 // await User.sync({alter: true}); // Update atribute of table
-                yield role_2.Role.sync();
+                yield role_2.Role.sync({ force: true });
                 yield user_2.User.sync();
                 console.log("Conexion de DB exitoso");
             }

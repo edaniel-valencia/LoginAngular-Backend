@@ -4,7 +4,7 @@ import { User } from '../models/user'
 import { Op } from 'sequelize'
 import jwt from 'jsonwebtoken'
 
-export const register = async (req: Request, res: Response) => {
+export const CreateUser = async (req: Request, res: Response) => {
 
     const { Uname, Ulastname, Upassword, Uemail, Ucredential } = req.body  
     const userEmail = await User.findOne({ where: {  Uemail: Uemail  }})
@@ -21,7 +21,6 @@ export const register = async (req: Request, res: Response) => {
             msg: `Usuario ya existe con la credencial ${Ucredential}`
         })
     }
-
 
     const UpasswordHash = await bcrypt.hash(Upassword, 10)
     try {
@@ -45,7 +44,48 @@ export const register = async (req: Request, res: Response) => {
     }
 }
 
-export const login = async (req: Request, res: Response) => {
+export const CreateTypeUser = async (req: Request, res: Response) => {
+
+    const { Uname, Ulastname, Upassword, Uemail, Ucredential, Ustatus } = req.body  
+    
+    const userEmail = await User.findOne({ where: {  Uemail: Uemail  }})
+    const userCredential = await User.findOne({ where: {  Ucredential: Ucredential  }})
+
+    if (userEmail) {
+        return res.status(400).json({
+            msg: `Usuario ya existe con el email ${Uemail}`
+        })
+    }
+
+    if (userCredential) {
+        return res.status(400).json({
+            msg: `Usuario ya existe con la credencial ${Ucredential}`
+        })
+    }
+
+    const UpasswordHash = await bcrypt.hash(Upassword, 10)
+    try {
+        User.create({
+            Uname: Uname,
+            Ulastname: Ulastname,
+            Uemail: Uemail,
+            Upassword: UpasswordHash,
+            Ucredential: Ucredential,
+            Ustatus: Ustatus
+        })
+
+        res.json({
+            msg: `User ${Uname} ${Ulastname} create success.`
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            msg: `Existe un error al crear el usuario => `, error
+        })
+    }
+}
+
+export const LoginUser = async (req: Request, res: Response) => {
     const { Uemail, Upassword } = req.body;
 
     console.log(req.body);

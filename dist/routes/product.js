@@ -9,6 +9,7 @@ const validateToken_1 = __importDefault(require("./validateToken"));
 const router = (0, express_1.Router)();
 router.get("/api/product/read", validateToken_1.default, product_1.ReadProduct);
 router.get("/api/product/read/:Pid", product_1.ReadIdProductId);
-router.patch("/api/product/update/:Pid", product_1.UpdateProduct);
 router.post("/api/product/create", product_1.CreateProduct);
+router.patch("/api/product/update/:Pid", product_1.UpdateProduct);
+router.delete("/api/product/delete/:Pid", product_1.DeleteProduct);
 exports.default = router;

@@ -76,7 +76,7 @@ export const UpdateProduct = async (req: Request, res: Response) => {
 
         if (!product) {
             return res.status(404).json({
-                msg: `Categoría ${Pname} no encontrada`
+                msg: `Producto ${Pname} no encontrada`
             });
         }
 
@@ -91,12 +91,38 @@ export const UpdateProduct = async (req: Request, res: Response) => {
         );
 
         return res.json({
-            msg: `Categoría ${Pname} actualizada exitosamente`
+            msg: `Producto ${Pname} actualizada exitosamente`
         });
 
     } catch (error) {
         return res.status(500).json({
-            msg: `Error al actualizar la categoría ${Pname}`
+            msg: `Error al actualizar la Producto ${Pname}`
         });
     }
 };
+
+export const DeleteProduct = async (req: Request, res: Response) => {
+
+    const { Pid } = req.params;
+    try {
+        const product: any = await Product.findOne({ where: { Pid: Pid } });
+
+        if (!product) {
+            return res.status(404).json({
+                msg: `Producto con ID ${Pid} no encontrada`
+            });
+        }
+
+        await Product.destroy({ where: { Pid: Pid } });
+
+        return res.json({
+            msg: `Producto con ID ${Pid} eliminada exitosamente`
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            msg: `Error al eliminar la Producto con ID ${Pid}`
+        });
+    }
+};
+

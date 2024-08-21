@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Role = void 0;
 const sequelize_1 = require("sequelize");
 const connection_1 = __importDefault(require("../database/connection"));
-exports.Role = connection_1.default.define("rol", {
+exports.Role = connection_1.default.define("role", {
     Rid: { type: sequelize_1.DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     Rname: { type: sequelize_1.DataTypes.STRING, allowNull: false },
     Rstatus: { type: sequelize_1.DataTypes.INTEGER, allowNull: false },

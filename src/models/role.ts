@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../database/connection";
 
 
-export const Role = sequelize.define("rol", {
+export const Role = sequelize.define("role", {
     Rid:        { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     Rname:      { type: DataTypes.STRING, allowNull: false },
     Rstatus:    { type: DataTypes.INTEGER, allowNull: false },
