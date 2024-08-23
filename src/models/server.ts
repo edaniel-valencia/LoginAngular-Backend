@@ -53,10 +53,10 @@ class Server {
             await Category.sync(); 
             await Product.sync(); 
             // await User.sync({alter: true}); // Update atribute of table
-            await Role.sync({force: true}); 
+            await Role.sync(); 
             await User.sync(); 
             console.log("Conexion de DB exitoso");
-            
+        
         } catch (error) {
             console.log("Conexion de DB errorena => "+error);
             
