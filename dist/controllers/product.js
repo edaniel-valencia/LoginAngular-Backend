@@ -73,12 +73,15 @@ const UpdateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 msg: `Producto ${Pname} no encontrada`
             });
         }
+        console.log("Estoy por aqui ****** =>" + product.Pid);
+        console.log("Estoy por aqui ****** =>" + Pname);
         yield product_1.Product.update({
             Pname: Pname,
             Pdescription: Pdescription,
-            Pstatus: Pstatus,
+            Pstatus: 1,
             CategoryId: CategoryId
         }, { where: { Pid: Pid } });
+        console.log("Estoy por aqui ******");
         return res.json({
             msg: `Producto ${Pname} actualizada exitosamente`
         });

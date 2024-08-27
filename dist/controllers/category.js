@@ -13,10 +13,11 @@ exports.DeleteCategory = exports.UpdateCategory = exports.CreateCategory = expor
 const category_1 = require("../models/category");
 const ReadCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const listCategory = yield category_1.Category.findAll();
-    res.json({
-        msg: `List de categoría encontrada exitosamente`,
-        data: listCategory
-    });
+    res.json(listCategory);
+    // res.json({
+    //     msg: `List de categoría encontrada exitosamente`,
+    //     data: listCategory
+    // });
 });
 exports.ReadCategory = ReadCategory;
 const ReadCategoryId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
