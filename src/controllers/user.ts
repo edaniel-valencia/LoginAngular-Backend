@@ -4,6 +4,17 @@ import { User } from '../models/user'
 import { Op } from 'sequelize'
 import jwt from 'jsonwebtoken'
 
+
+export const ReadUser = async (req: Request, res: Response) => {
+    const listUser = await User.findAll();
+    res.json({
+        msg: `List de categoría encontrada exitosamente`,
+        data: listUser
+    });
+}
+
+
+
 export const CreateUser = async (req: Request, res: Response) => {
 
     const { Uname, Ulastname, Upassword, Uemail, Ucredential } = req.body  

@@ -12,10 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginUser = exports.CreateTypeUser = exports.CreateUser = void 0;
+exports.LoginUser = exports.CreateTypeUser = exports.CreateUser = exports.ReadUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = require("../models/user");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const ReadUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const listUser = yield user_1.User.findAll();
+    res.json({
+        msg: `List de categoría encontrada exitosamente`,
+        data: listUser
+    });
+});
+exports.ReadUser = ReadUser;
 const CreateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Uname, Ulastname, Upassword, Uemail, Ucredential } = req.body;
     const userEmail = yield user_1.User.findOne({ where: { Uemail: Uemail } });
