@@ -12,7 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+<<<<<<< HEAD
 exports.LoginUser = exports.CreateTypeUser = exports.CreateUser = exports.ReadUser = void 0;
+=======
+exports.LoginUser = exports.CreateUser = void 0;
+>>>>>>> 13463c3c35e991302bc3006ca87468f85b5b63f6
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = require("../models/user");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -59,41 +63,6 @@ const CreateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.CreateUser = CreateUser;
-const CreateTypeUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { Uname, Ulastname, Upassword, Uemail, Ucredential, Ustatus } = req.body;
-    const userEmail = yield user_1.User.findOne({ where: { Uemail: Uemail } });
-    const userCredential = yield user_1.User.findOne({ where: { Ucredential: Ucredential } });
-    if (userEmail) {
-        return res.status(400).json({
-            msg: `Usuario ya existe con el email ${Uemail}`
-        });
-    }
-    if (userCredential) {
-        return res.status(400).json({
-            msg: `Usuario ya existe con la credencial ${Ucredential}`
-        });
-    }
-    const UpasswordHash = yield bcrypt_1.default.hash(Upassword, 10);
-    try {
-        user_1.User.create({
-            Uname: Uname,
-            Ulastname: Ulastname,
-            Uemail: Uemail,
-            Upassword: UpasswordHash,
-            Ucredential: Ucredential,
-            Ustatus: Ustatus
-        });
-        res.json({
-            msg: `User ${Uname} ${Ulastname} create success.`
-        });
-    }
-    catch (error) {
-        res.status(400).json({
-            msg: `Existe un error al crear el usuario => `, error
-        });
-    }
-});
-exports.CreateTypeUser = CreateTypeUser;
 const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Uemail, Upassword } = req.body;
     console.log(req.body);

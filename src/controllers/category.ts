@@ -3,10 +3,11 @@ import { Category } from '../models/category'
 
 export const ReadCategory = async (req: Request, res: Response) => {
     const listCategory = await Category.findAll();
-    res.json({
-        msg: `List de categoría encontrada exitosamente`,
-        data: listCategory
-    });
+    res.json(listCategory);
+    // res.json({
+    //     msg: `List de categoría encontrada exitosamente`,
+    //     data: listCategory
+    // });
 }
 
 export const ReadCategoryId = async (req: Request, res: Response) => {

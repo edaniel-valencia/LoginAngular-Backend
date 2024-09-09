@@ -70,25 +70,30 @@ export const UpdateProduct = async (req: Request, res: Response) => {
 
     const { Pid } = req.params;
     const { Pname, Pdescription, Pstatus, CategoryId } = req.body;
-
+    
     try {
         const product: any = await Product.findOne({ where: { Pid: Pid } });
-
+        
         if (!product) {
             return res.status(404).json({
                 msg: `Producto ${Pname} no encontrada`
             });
         }
+        console.log("Estoy por aqui ****** =>" + product.Pid);
+        console.log("Estoy por aqui ****** =>" + Pname);
 
         await Product.update(
             {
                 Pname: Pname,
                 Pdescription: Pdescription,
-                Pstatus: Pstatus,
+                Pstatus: 1,
                 CategoryId:CategoryId
             },
             { where: { Pid: Pid } }
         );
+
+        console.log("Estoy por aqui ******");
+        
 
         return res.json({
             msg: `Producto ${Pname} actualizada exitosamente`

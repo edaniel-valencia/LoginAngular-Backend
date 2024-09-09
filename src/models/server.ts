@@ -56,7 +56,7 @@ class Server {
             await Role.sync(); 
             await User.sync(); 
             console.log("Conexion de DB exitoso");
-            
+        
         } catch (error) {
             console.log("Conexion de DB errorena => "+error);
             
