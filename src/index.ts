@@ -1,7 +1,4 @@
-import dotenv from 'dotenv'
+import 'dotenv/config'
 import Server from "./models/server"
 
-// CONFIGURACION DEL DOTENV
-dotenv.config() 
-const server =  new Server()
-
+const server = new Server()

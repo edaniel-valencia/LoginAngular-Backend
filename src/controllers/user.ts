@@ -1,25 +1,31 @@
-import { Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import { User } from '../models/user'
-import { Op } from 'sequelize'
 import jwt from 'jsonwebtoken'
-
+import prisma from '../database/connection'
 
 export const ReadUser = async (req: Request, res: Response) => {
-    const listUser = await User.findAll();
-    res.json({
-        msg: `List de categoría encontrada exitosamente`,
-        data: listUser
-    });
+    try {
+        const listUser = await prisma.user.findMany();
+        res.json({
+            msg: `Lista de usuarios encontrada exitosamente`,
+            data: listUser
+        });
+    } catch (error) {
+        res.status(500).json({
+            msg: `Error al listar los usuarios`
+        });
+    }
 }
 
 
 
 export const CreateUser = async (req: Request, res: Response) => {
 
-    const { Uname, Ulastname, Upassword, Uemail, Ucredential } = req.body  
-    const userEmail = await User.findOne({ where: {  Uemail: Uemail  }})
-    const userCredential = await User.findOne({ where: {  Ucredential: Ucredential  }})
+    const { Uname, Ulastname, Upassword, Uemail, Ucredential } = req.body
+    const [userEmail, userCredential] = await Promise.all([
+        prisma.user.findUnique({ where: { Uemail: Uemail } }),
+        prisma.user.findUnique({ where: { Ucredential: Ucredential } })
+    ])
 
     if (userEmail) {
         return res.status(400).json({
@@ -35,13 +41,15 @@ export const CreateUser = async (req: Request, res: Response) => {
 
     const UpasswordHash = await bcrypt.hash(Upassword, 10)
     try {
-        User.create({
-            Uname: Uname,
-            Ulastname: Ulastname,
-            Uemail: Uemail,
-            Upassword: UpasswordHash,
-            Ucredential: Ucredential,
-            Ustatus: 1
+        await prisma.user.create({
+            data: {
+                Uname: Uname,
+                Ulastname: Ulastname,
+                Uemail: Uemail,
+                Upassword: UpasswordHash,
+                Ucredential: Ucredential,
+                Ustatus: 1
+            }
         })
 
         res.json({
@@ -58,28 +66,25 @@ export const CreateUser = async (req: Request, res: Response) => {
 export const LoginUser = async (req: Request, res: Response) => {
     const { Uemail, Upassword } = req.body;
 
-    console.log(req.body);
-
-    const user: any = await User.findOne({ where: { Uemail: Uemail } })
+    const user = await prisma.user.findUnique({ where: { Uemail: Uemail } })
     if (!user) {
         return res.status(400).json({
             msg: `Usuario no existe con el email ${Uemail}`
         })
     }
 
-    
+
     const passwordValid = await bcrypt.compare(Upassword, user.Upassword)
 
     if (!passwordValid) {
         return res.status(400).json({
-            msg: `Password Incorrecto => ${Upassword}`
+            msg: `Password Incorrecto`
         })
     }
 
     const token = jwt.sign({
         Uemail: Uemail
-    }, process.env.SECRET_KEY || 'TSE-Edaniel-Valencia',
-        // { expiresIn: '10000' }
+    }, process.env.SECRET_KEY as string,
     );
     res.json({ token })
 }

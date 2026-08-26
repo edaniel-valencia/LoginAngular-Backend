@@ -1,13 +1,7 @@
-import { Sequelize } from "sequelize"
+import { PrismaClient } from "@prisma/client"
+import { PrismaMariaDb } from "@prisma/adapter-mariadb"
 
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL as string)
+const prisma = new PrismaClient({ adapter })
 
-const sequelize = new Sequelize('loginangular', 'root', '1004-TSE',{
-    host: 'localhost',
-    dialect: 'mysql'
-})
-// const sequelize = new Sequelize('pos', 'root', '1004',{
-//     host: 'localhost',
-//     dialect: 'mysql'
-// })
-
-export default sequelize
+export default prisma

@@ -1,20 +1,21 @@
-import { Request, Response } from 'express'
-import { Product } from '../models/product';
-import { Category } from '../models/category';
-
-
+import type { Request, Response } from 'express'
+import prisma from '../database/connection'
 
 export const ReadProduct = async (req: Request, res: Response) => {
-    const listProduct = await Product.findAll();
-    res.json(
-        listProduct
-    );
+    try {
+        const listProduct = await prisma.product.findMany();
+        res.json(listProduct);
+    } catch (error) {
+        res.status(500).json({
+            msg: `Error al listar los productos`
+        });
+    }
 }
 
 export const ReadIdProductId = async (req: Request, res: Response) => {
     const { Pid } = req.params;
     try {
-        const product = await Product.findOne({ where: { Pid: Pid } });
+        const product = await prisma.product.findUnique({ where: { Pid: Number(Pid) } });
 
         if (!product) {
             return res.status(404).json({
@@ -39,7 +40,7 @@ export const CreateProduct = async (req: Request, res: Response) => {
 
     try {
 
-        const existingProduct = await Product.findOne({ where: { Pname: Pname } });
+        const existingProduct = await prisma.product.findFirst({ where: { Pname: Pname } });
 
         if (existingProduct) {
             return res.status(400).json({
@@ -47,13 +48,15 @@ export const CreateProduct = async (req: Request, res: Response) => {
             })
         }
 
-        Product.create({
-            Pname: Pname,
-            Pdescription: Pdescription,
-            Pstatus: 1,
-            CategoryId: CategoryId
+        await prisma.product.create({
+            data: {
+                Pname: Pname,
+                Pdescription: Pdescription,
+                Pstatus: 1,
+                CategoryId: Number(CategoryId)
+            }
         })
-        
+
         return res.json({
             msg: `Producto ${Pname}, creada exitosamente`
         })
@@ -69,31 +72,26 @@ export const CreateProduct = async (req: Request, res: Response) => {
 export const UpdateProduct = async (req: Request, res: Response) => {
 
     const { Pid } = req.params;
-    const { Pname, Pdescription, Pstatus, CategoryId } = req.body;
-    
+    const { Pname, Pdescription, CategoryId } = req.body;
+
     try {
-        const product: any = await Product.findOne({ where: { Pid: Pid } });
-        
+        const product = await prisma.product.findUnique({ where: { Pid: Number(Pid) } });
+
         if (!product) {
             return res.status(404).json({
                 msg: `Producto ${Pname} no encontrada`
             });
         }
-        console.log("Estoy por aqui ****** =>" + product.Pid);
-        console.log("Estoy por aqui ****** =>" + Pname);
 
-        await Product.update(
-            {
+        await prisma.product.update({
+            where: { Pid: Number(Pid) },
+            data: {
                 Pname: Pname,
                 Pdescription: Pdescription,
                 Pstatus: 1,
-                CategoryId:CategoryId
-            },
-            { where: { Pid: Pid } }
-        );
-
-        console.log("Estoy por aqui ******");
-        
+                CategoryId: Number(CategoryId)
+            }
+        });
 
         return res.json({
             msg: `Producto ${Pname} actualizada exitosamente`
@@ -110,7 +108,7 @@ export const DeleteProduct = async (req: Request, res: Response) => {
 
     const { Pid } = req.params;
     try {
-        const product: any = await Product.findOne({ where: { Pid: Pid } });
+        const product = await prisma.product.findUnique({ where: { Pid: Number(Pid) } });
 
         if (!product) {
             return res.status(404).json({
@@ -118,7 +116,7 @@ export const DeleteProduct = async (req: Request, res: Response) => {
             });
         }
 
-        await Product.destroy({ where: { Pid: Pid } });
+        await prisma.product.delete({ where: { Pid: Number(Pid) } });
 
         return res.json({
             msg: `Producto con ID ${Pid} eliminada exitosamente`
@@ -130,4 +128,3 @@ export const DeleteProduct = async (req: Request, res: Response) => {
         });
     }
 };
-

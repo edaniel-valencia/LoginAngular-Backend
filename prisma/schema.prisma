@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Category {
+  Cid          Int      @id @default(autoincrement())
+  Cname        String   @db.VarChar(255)
+  Cdescription String   @db.VarChar(255)
+  Cstatus      Int
+  CcreatedAt   DateTime @default(now()) @map("Ccreated")
+  CupdatedAt   DateTime @default(now()) @map("Cupdated")
+  CdeletedAt   DateTime @default(now()) @map("Cdeleted")
+  products     Product[]
+
+  @@map("category")
+}
+
+model Product {
+  Pid          Int      @id @default(autoincrement())
+  Pname        String   @db.VarChar(255)
+  Pdescription String   @db.VarChar(255)
+  CategoryId   Int
+  category     Category @relation(fields: [CategoryId], references: [Cid])
+  Pstatus      Int
+  PcreatedAt   DateTime @default(now()) @map("Pcreated")
+  PupdatedAt   DateTime @default(now()) @map("Pupdated")
+  PdeletedAt   DateTime @default(now()) @map("Pdeleted")
+
+  @@map("product")
+}
+
+model Role {
+  Rid          Int      @id @default(autoincrement())
+  Rname        String   @db.VarChar(255)
+  Rstatus      Int
+  RcreatedAt   DateTime @default(now()) @map("Rcreated")
+  RupdatedAt   DateTime @default(now()) @map("Rupdated")
+  RdeletedAt   DateTime @default(now()) @map("Rdeleted")
+
+  @@map("role")
+}
+
+model User {
+  Uid         Int    @id @default(autoincrement())
+  Uname       String @db.VarChar(255)
+  Ulastname   String @db.VarChar(255)
+  Uemail      String @unique @db.VarChar(255)
+  Upassword   String @unique @db.VarChar(255)
+  Ucredential String @unique @db.VarChar(255)
+  Ustatus     Int
+
+  @@map("user")
+}
+
+model UserHasRoles {
+  Uid Int
+  Rid Int
+
+  @@id([Uid, Rid])
+  @@map("user_has_roles")
+}
