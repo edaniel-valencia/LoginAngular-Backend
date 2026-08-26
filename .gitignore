@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Build / Compilado
+dist/
+build/
+
+# Prisma - migraciones locales generadas (opcional, depende si quieres versionar migraciones)
+# prisma/migrations/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
