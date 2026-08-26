@@ -2,5 +2,5 @@
   "watch": ["src", "prisma"],
   "ext": "ts,prisma",
   "ignore": ["src/**/*.test.ts"],
-  "exec": "tsc && node dist/index.js"
+  "exec": "tsc && node dist/main.js"
 }

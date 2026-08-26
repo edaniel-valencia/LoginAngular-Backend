@@ -1,6 +1,10 @@
 import 'dotenv/config'
 import bcrypt from 'bcrypt'
-import prisma from '../src/database/connection.ts'
+import { PrismaClient } from '@prisma/client'
+import { PrismaMariaDb } from '@prisma/adapter-mariadb'
+
+const adapter = new PrismaMariaDb(process.env.DATABASE_URL as string)
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
     const Upassword = await bcrypt.hash('Admin123!', 10)

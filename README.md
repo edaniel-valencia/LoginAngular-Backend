@@ -2,7 +2,7 @@
   <img src="./logo.png" alt="Login Angular - Backend" width="480">
 </p>
 
-<h1 align="center">Login Backend (Node 24 + Express + Prisma)</h1>
+<h1 align="center">Login Backend (Node 24 + NestJS + Prisma)</h1>
 
 <p align="center">
   API REST para autenticación y gestión de categorías, productos y roles.<br/>
@@ -38,9 +38,10 @@
 |-----------------|------------------------------------------------|
 | Runtime         | Node.js **24+**                                 |
 | Lenguaje        | TypeScript 5.9                                  |
-| Framework HTTP  | Express 4                                       |
+| Framework HTTP  | NestJS 11 (sobre Express vía `@nestjs/platform-express`) |
 | ORM             | Prisma 7 (`@prisma/adapter-mariadb` sobre MySQL) |
-| Auth            | JWT (`jsonwebtoken`) + `bcrypt`                 |
+| Auth            | JWT vía `@nestjs/jwt` + `bcrypt`                |
+| Validación      | `class-validator` + `class-transformer` (`ValidationPipe` global) |
 | Gestor de paquetes | pnpm 11 (con `onlyBuiltDependencies` para limitar scripts de instalación) |
 | Tests           | `node:test` nativo (sin dependencias extra)     |
 
@@ -115,25 +116,33 @@ pnpm exec prisma studio                        # explorar la base de datos con U
 pnpm exec prisma generate                      # regenerar el cliente (se corre solo en postinstall)
 ```
 
-La conexión se arma en [`src/database/connection.ts`](./src/database/connection.ts) usando el adapter `@prisma/adapter-mariadb`, que es el driver oficial de Prisma 7 para MySQL/MariaDB, apuntando a `DATABASE_URL`.
+La conexión se arma en [`src/prisma/prisma.service.ts`](./src/prisma/prisma.service.ts) (un `PrismaService` inyectable que extiende `PrismaClient`) usando el adapter `@prisma/adapter-mariadb`, que es el driver oficial de Prisma 7 para MySQL/MariaDB, apuntando a `DATABASE_URL`.
 
 ## Estructura del proyecto
 
 ```
 src/
-├── controllers/   # Lógica de cada recurso (category, product, role, user)
-├── routes/        # Definición de endpoints Express + middleware de auth
-├── models/        # Server.ts (bootstrap de Express)
-└── database/      # Cliente de Prisma
+├── main.ts          # Bootstrap de Nest (CORS, ValidationPipe global, listen)
+├── app.module.ts     # Módulo raíz, importa ConfigModule + módulos de feature
+├── prisma/           # PrismaService/PrismaModule (cliente de Prisma, global)
+├── auth/             # JwtAuthGuard + AuthModule (JWT vía @nestjs/jwt)
+├── users/             # Módulo de usuarios (auth, registro, login)
+├── categories/        # Módulo de categorías
+├── products/          # Módulo de productos (GET /read protegido con JwtAuthGuard)
+└── roles/             # Módulo de roles
 prisma/
 ├── schema.prisma  # Modelos y datasource
 ├── migrations/    # Historial de migraciones SQL
 └── seed.ts        # Datos de prueba
 ```
 
+Cada módulo de feature sigue el patrón estándar de Nest: `*.module.ts` (wiring), `*.controller.ts` (rutas), `*.service.ts` (lógica de negocio con Prisma) y `dto/` (clases validadas con `class-validator`).
+
 ## Endpoints de la API
 
 Base path: `http://localhost:<PORT>`
+
+> Los endpoints de creación/actualización validan el body con `class-validator`. Un body con campos faltantes o de tipo incorrecto devuelve `400` con el formato estándar de Nest (`{"statusCode":400,"message":[...],"error":"Bad Request"}`).
 
 ### Usuarios (`/api/user`)
 
@@ -209,7 +218,7 @@ Corre tests unitarios (con el test runner nativo de Node, sin dependencias extra
 
 4. **Migraciones**: usá siempre `prisma migrate deploy` (no `migrate dev`) en producción — aplica las migraciones existentes sin generar nuevas ni pedir confirmación interactiva.
 
-5. **CORS**: el server tiene `cors()` habilitado sin restricciones. Si el frontend se sirve desde un dominio conocido, restringilo en [`src/models/server.ts`](./src/models/server.ts) antes de desplegar.
+5. **CORS**: el server tiene `app.enableCors()` habilitado sin restricciones. Si el frontend se sirve desde un dominio conocido, restringilo en [`src/main.ts`](./src/main.ts) antes de desplegar.
 
 ## Proyecto relacionado
 
